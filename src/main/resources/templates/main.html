@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.84.0">
+    <title>Beauty saloon</title>
+
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/bootstrap.css}">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/carousel.css}">
+</head>
+<body>
+<p sec:authentication='principal.authorities'></p>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: #ecc2ff;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" th:text="#{ADMINISTRATOR}">Session</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                    aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_main}" th:href="@{/main}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{procedures_review}"
+                           th:href="@{http://localhost:8080/api/procedures/table}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_by_master_rat}"
+                           th:href="@{http://localhost:8080/api/users/ratings}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/logout}" th:text="#{menu_log_out}"> LOGOUT
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/api/appointments/get/admin}" th:text="#{menu_admin}">ADMIN MENU</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-md-0 my-5 my-lg-0 navbar-nav-scroll">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_book}"
+                           th:href="@{http://localhost:8080/api/appointments/create/master}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_my_procedures}"
+                           th:href="@{http://localhost:8080/api/appointments/get/client}"></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/main/?lang=ukr}" type="button" class="btn btn-primary">ukr</a>
+                        <a th:href="@{/main/?lang=en}" type="button" class="btn btn-primary">en</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+                    aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img th:src="@{/assets/images/main_hair_coloring.jpg}" class="img-fluid" alt="">
+                <div class="container">
+                    <div class="carousel-caption text-start">
+                        <h1 th:text="#{hair_coloring}">HAIRCOLORING</h1>
+                        <p th:text="#{main_hair_coloring_desc}">HCDESCRIPTION</p>
+                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
+                            UP</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/assets/images/main_face_massage.jpg}" class="img-fluid" alt="">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1 th:text="#{face_massage}">FACEMASSAGE</h1>
+                        <p th:text="#{main_face_massage_desc}">FACEMASSAGEDESC</p>
+                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
+                            UP</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/assets/images/main_eyelash_extension.jpg}" class="img-fluid" alt="">
+                <div class="container">
+                    <div class="carousel-caption">
+                        <h1 th:text="#{eyelash_extension}">EYELASHEXTENSION</h1>
+                        <p th:text="#{main_eyelash_extension_desc}">EYELASHEXTENSION</p>
+                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
+                            UP</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img th:src="@{/assets/images/main_nail_coloring.jpg}" class="img-fluid" alt="">
+                <div class="container">
+                    <div class="carousel-caption text-end">
+                        <h1 th:text="#{nail_staining}">NAILSTAINING</h1>
+                        <p th:text="#{main_eyelash_extension_desc}">NAILSTAINING</p>
+                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
+                            UP</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="container marketing">
+        <!-- Three columns of text below the carousel -->
+        <div class="row">
+            <div class="col-lg-4">
+                <img th:src="@{/assets/images/main_master_1.jpg}" class="img-fluid" alt="">
+                <h2 th:text="#{main_best_master}">BESTMASTER</h2>
+                <p th:text="#{main_difficult_appoint}">DIFFICULT</p>
+                <p><a class="btn btn-secondary" th:text="#{main_view_schedule}" th:href="@{/api/create}"> VIEW
+                    RATINGS</a></p>
+            </div>
+            <div class="col-lg-4">
+                <img th:src="@{/assets/images/main_master_2.jpg}" class="img-fluid" alt="">
+                <h2 th:text="#{main_best_master}">BESTMASTER</h2>
+                <p th:text="#{main_difficult_appoint}">DIFFICULT</p>
+                <p><a class="btn btn-secondary" th:text="#{main_view_schedule}" th:href="@{/api/create}"> VIEW
+                    RATINGS</a></p>
+            </div><!-- /.col-lg-4 -->
+            <div class="col-lg-4">
+                <img th:src="@{/assets/images/main_master_3.jpg}" class="img-fluid" alt="">
+                <h2 th:text="#{main_best_master}">BESTMASTER</h2>
+                <p th:text="#{main_difficult_appoint}">DIFFICULT</p>
+                <p><a class="btn btn-secondary" th:text="#{main_view_schedule}" th:href="@{/api/create}"> VIEW
+                    RATINGS</a></p>
+            </div><!-- /.col-lg-4 -->
+        </div><!-- /.row -->
+
+        <!-- FOOTER -->
+        <footer class="container">
+            <p class="float-end"><a href="#" th:text="#{main_back_top}">
+                BACKTOP
+            </a></p>
+            <p th:text="#{epam}">&copy; 2017–2021&middot;
+                <a href="https://careers.epam.ua/" th:text="#{main_rights}">
+                    RIGHTS
+                </a>
+                &middot; <a href="https://zakon.rada.gov.ua/laws/show/254%D0%BA/96-%D0%B2%D1%80#Text"
+                            th:text="#{main_rights}">
+                    RIGHTS
+                </a></p>
+        </footer>
+    </div>
+</main>
+<script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

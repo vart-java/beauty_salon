@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/signin.css}">
+</head>
+<body class="text-center">
+<main class="form-signin">
+    <form th:action="@{/registration}" th:object="${userForm}" method="post">
+        <img class="mb-4" src="/images/authorization_logo-removebg-preview.png" alt="" width="220" height="220">
+        <h1 class="h3 mb-3 fw-normal" th:text="#{sign_in_please}">sign_in_please</h1>
+
+        <div class="form-floating">
+            <input type="email" class="form-control" placeholder="name@example.com"
+                   id="login" th:field="*{login}" minlength="6" maxlength="24">
+            <label for="login">Email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" placeholder="Password"
+                   id="password" th:field="*{password}"
+                   pattern="[a-zA-Zа-яА-ЯіІїЇєЄ0-9]+" minlength="5" maxlength="8">
+            <label for="password">Password</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" th:text="#{sign_in}">
+            sign_in
+        </button>
+        <p style="color: red;" class="text-center"></p>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" th:text="#{create_acc}">
+            create_acc
+        </button>
+        <p style="color: red;" class="text-center">
+        </p>
+        <button class="w-100 btn btn-lg btn-secondary" name="command" value="authAsGuest" th:text="#{as_guest}">
+            as_guest
+        </button>
+    </form>
+    <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+</main>
+<script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/assets/js/jquery-3.6.0.js}"></script>
+</body>
+</html>

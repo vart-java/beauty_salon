@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/signin.css}">
+</head>
+<body class="text-center">
+<main class="form-signin">
+    <form action="/login" method="post">
+        <img class="mb-4" th:src="@{/assets/images/authorization_logo-removebg-preview.png}" alt="" width="220" height="220">
+        <h1 class="h3 mb-3 fw-normal" th:text="#{sign_in_please}">sign_in_please</h1>
+
+        <div class="form-floating">
+            <input type="email" class="form-control" placeholder="name@example.com"
+                   id="login" name="username" minlength="6" maxlength="24">
+            <label for="login">Email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" placeholder="Password"
+                   id="password" name="password"
+                   pattern="[a-zA-Zа-яА-ЯіІїЇєЄ0-9]+" minlength="5" maxlength="8">
+            <label for="password">Password</label>
+        </div>
+        <button class="w-100 btn btn-primary" type="submit" th:text="#{sign_in}">
+            sign_in
+        </button>
+        <p></p>
+    </form>
+
+    <button class="w-100 btn btn-primary" id="createBtn" type="submit" th:text="#{create_acc}">
+        sign_in
+    </button>
+    <p></p>
+    <a class="btn w-100 btn btn-secondary" id="asGuest" type="submit" th:text="#{as_guest}" th:href="@{/main}">
+        sign_in
+    </a>
+
+    <p class="mt-5 mb-3 text-muted">&copy; 2021</p>
+</main>
+<script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/assets/js/jquery-3.6.0.js}"></script>
+<script>
+    $("#createBtn").click(function() {
+        var sendData = {
+            login: $('#login').val(),
+            password: $('#password').val()
+        }
+        $.ajax({
+            method: "POST",
+            url: "/registration",
+            data: JSON.stringify(sendData),
+            contentType: "application/json; charset=utf-8"
+        });
+    })
+</script>
+</body>
+</html>

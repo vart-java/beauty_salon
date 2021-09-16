@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ratings</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/myratings.css}">
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: #ecc2ff;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" th:text="#{ADMINISTRATOR}">Session</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                    aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_main}" th:href="@{/main}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{procedures_review}"
+                           th:href="@{http://localhost:8080/api/procedures/table}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_by_master_rat}"
+                           th:href="@{http://localhost:8080/api/users/ratings}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/main}" th:text="#{menu_log_out}"> LOGOUT
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/main}" th:text="#{menu_admin}">ADMIN MENU</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-md-0 my-5 my-lg-0 navbar-nav-scroll">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_book}"
+                           th:href="@{http://localhost:8080/api/appointments/create/master}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_my_procedures}"
+                           th:href="@{http://localhost:8080/api/appointments/get/client}"></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/main/?lang=ukr}" type="button" class="btn btn-primary">ukr</a>
+                        <a th:href="@{/main/?lang=en}" type="button" class="btn btn-primary">en</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<h1 class="text-center" th:text="#{menu_procedures}">procedures</h1>
+<table class="table align-middle">
+    <thead>
+    <tr>
+        <th scope="col" class="text-center"><a th:text="#{procedure_procedure}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=procedure}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{CLIENT}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=master}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{MASTER}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=master}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{start_time}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=rating}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{end_time}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=rating}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{status}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=rating}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{procedure_confirm}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=rating}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{procedure_getpaid}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=rating}"></a>
+        </th>
+        <th scope="col" class="text-center"><a th:text="#{procedure_delete}"
+                                               th:href="@{http://localhost:8080/api/procedures/table/sort=rating}"></a>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="app : ${allAppointments}">
+        <td th:text="#{${app.getProcedure().getName()}}">
+        <td th:text="${app.getClient().getLogin()}">
+        <td th:text="${app.getMaster().getLogin()}">
+        <td th:text="${app.getStartDate().toLocalDateTime()}">
+        <td th:text="${app.getEndDate().toLocalDateTime()}">
+        <td th:text="${app.getStatus().toString().toLowerCase()}">
+        <td>
+            <form action="/api/appointments/admin/confirm" method="post">
+                <input type="hidden" name="confirm" th:value="${app.id}">
+                <button type="submit" class="btn btn-success" th:text="#{procedure_confirm}"
+                        th:disabled="${!app.getStatus().toString().equals('DECLARED')}">
+                </button>
+            </form>
+        </td>
+        <td>
+            <form action="/api/appointments/admin/paid" method="post">
+                <input type="hidden" name="confirm" th:value="${app.id}">
+                <button type="submit" class="btn btn-warning" th:text="#{procedure_paidup}"
+                        th:disabled="${!app.getStatus().toString().equals('FINISHED')}">
+                </button>
+            </form>
+        </td>
+        <td>
+            <form action="/api/appointments/admin/delete" method="post">
+                <input type="hidden" name="confirm" th:value="${app.id}">
+                <button type="submit" class="btn btn-danger" th:text="#{procedure_delete}">
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/assets/js/jquery-3.6.0.js}"></script>
+</body>
+</html>

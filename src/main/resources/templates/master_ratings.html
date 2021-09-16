@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Ratings</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/myratings.css}">
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: #ecc2ff;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#" th:text="#{ADMINISTRATOR}">Session</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+                    aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_main}" th:href="@{/main}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{procedures_review}"
+                           th:href="@{http://localhost:8080/api/procedures/table}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_by_master_rat}"
+                           th:href="@{http://localhost:8080/api/users/ratings}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/main}" th:text="#{menu_log_out}"> LOGOUT
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/main}" th:text="#{menu_admin}">ADMIN MENU</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-md-0 my-5 my-lg-0 navbar-nav-scroll">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_book}"
+                           th:href="@{http://localhost:8080/api/appointments/create/master}"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:text="#{menu_my_procedures}"
+                           th:href="@{http://localhost:8080/api/appointments/get/client}"></a>
+                    </li>
+                    <li>
+                        <a th:href="@{/main/?lang=ukr}" type="button" class="btn btn-primary">ukr</a>
+                        <a th:href="@{/main/?lang=en}" type="button" class="btn btn-primary">en</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<h1 class="text-center" th:text="#{rating_our_masters}">rating_our_masters<span
+        class="badge bg-primary" th:text="#{click_on_master}">click_on_master</span></h1>
+<div class="container tables">
+    <div class="row">
+        <div class="col-lg-3" th:if="${not #lists.isEmpty(masterSpecializationRatings)}"
+             th:each="specializationRatings : ${masterSpecializationRatings}">
+            <table class="table align-middle">
+                <caption></caption>
+                <h4 class="text-center" th:text="#{${specializationRatings.getKey().getName()}}">
+                    Skills
+                </h4>
+                <thead>
+                <tr>
+                    <th scope="col" class="text-center" th:text="#{MASTER}">MASTERNAME</th>
+                    <th scope="col" class="text-center" th:text="#{rating}">RATING</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="table table-borderless" th:each="master : ${specializationRatings.getValue()}">
+                    <td>
+                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                th:text="${master.getLogin().substring(0, master.getLogin().indexOf('@'))}">
+                            MASTERLOGIN
+                        </button>
+                        <div class="dropdown-menu p-2 shadow rounded-3" style="width: 300px"
+                             id="dropdownCalendar">
+                            <form th:action="@{/api/appointments/create/master/{id}(id=${master.getId()})}"
+                                  method="post" enctype="apllication/json">
+                                <input type="date" th:value="${localDate.plusDays(1)}"
+                                       th:min="${localDate.plusDays(1)}" th:max="${localDate.plusDays(7)}"
+                                       name="dateAppointment">
+                                <input type="hidden" name="pickedProcedure"
+                                       th:value="${specializationRatings.getKey().getId()}">
+                                <button type="submit" class="btn btn-primary" th:text="#{menu_book}">submit</button>
+                            </form>
+                        </div>
+                    </td>
+                    <td class="text-center align-middle" th:text="${master.getRating()}">RATING</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/assets/js/jquery-3.6.0.js}"></script>
+</body>
+</html>
