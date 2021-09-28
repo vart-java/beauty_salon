@@ -21,17 +21,11 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(@RequestBody RegistrationDto registrationDto, Model model) {
-
-//        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
-//            model.addAttribute("passwordError", "Пароли не совпадают");
-//            return "registration";
-//        }
         if (!userService.saveUser(registrationDto)){
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
             return "login";
         }
-
-        return "redirect:/main";
+        return "main";
     }
 }
 

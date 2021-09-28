@@ -36,3 +36,13 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+#success_message {
+  display:none;
+  color:red;
+}
+
+#error_message {
+  display:none;
+  color:red;
+}

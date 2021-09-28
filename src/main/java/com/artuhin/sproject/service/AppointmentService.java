@@ -37,4 +37,6 @@ public interface AppointmentService {
     List<AppointmentEntity> getAll();
 
     void delete (AppointmentSwitchDto dto);
+
+    boolean updateTimeAppointment(long id, String time);
 }

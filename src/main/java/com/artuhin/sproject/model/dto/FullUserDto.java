@@ -1,5 +1,6 @@
 package com.artuhin.sproject.model.dto;
 
+import com.artuhin.sproject.model.Role;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,6 +17,6 @@ public class FullUserDto {
     private String password;
     private double rating;
     private int recallCount;
-    private Set<CommonRoleDto> roles;
+    private Role role;
     private Set<CommonProcedureDto> skills;
 }

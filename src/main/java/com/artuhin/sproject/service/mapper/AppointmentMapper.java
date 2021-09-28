@@ -1,16 +1,15 @@
 package com.artuhin.sproject.service.mapper;
 
-import com.artuhin.sproject.model.dto.AppointmentSwitchDto;
-import com.artuhin.sproject.model.dto.CreateAppointmentGetDto;
+import com.artuhin.sproject.model.dto.BookMasterDailyScheduleTableDto;
 import com.artuhin.sproject.model.dto.MasterScheduleTableDto;
 import com.artuhin.sproject.model.entity.AppointmentEntity;
-import com.artuhin.sproject.model.AppointmentCreateGetModel;
 import com.artuhin.sproject.model.dto.AppointmentGetDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component
@@ -27,8 +26,8 @@ public class AppointmentMapper {
                 .master(userMapper.toCommonUserDto(entity.getMaster()))
                 .client(userMapper.toCommonUserDto(entity.getClient()))
                 .procedure(procedureMapper.toCommonProcedureDto(entity.getProcedure()))
-                .startDate(entity.getStartTime())
-                .endDate(entity.getEndTime())
+                .startDate(entity.getStartTime().toLocalDateTime())
+                .endDate(entity.getStartTime().toLocalDateTime().plusSeconds(entity.getProcedure().getDuration().getSeconds()))
                 .status(entity.getAppointmentStatus())
                 .build();
     }
@@ -38,18 +37,19 @@ public class AppointmentMapper {
                 .collect(Collectors.toList());
     }
 
-    public CreateAppointmentGetDto toCreateAppGetDto(AppointmentCreateGetModel model) {
-        return CreateAppointmentGetDto.builder()
-                .masters(userMapper.toFullUserDtoList(model.getMasters()))
-                .procedures(procedureMapper.toFullProcedureDtoList(model.getProcedures()))
-                .build();
+    public MasterScheduleTableDto toMasterScheduleTableDto(AppointmentEntity entity) {
+        return MasterScheduleTableDto.builder().appointmentStatus(entity.getAppointmentStatus().toString()).startTime(entity.getStartTime().toLocalDateTime().toLocalTime().toString()).endTime(entity.getStartTime().toLocalDateTime().plusSeconds(entity.getProcedure().getDuration().getSeconds()).toLocalTime().toString()).build();
     }
 
-    public MasterScheduleTableDto toMasterScheduleTableDto(AppointmentEntity entity){
-        return MasterScheduleTableDto.builder().appointmentStatus(entity.getAppointmentStatus().toString().toLowerCase(Locale.ROOT)).startTime(entity.getStartTime().toLocalDateTime().toLocalTime().toString()).endTime(entity.getEndTime().toLocalDateTime().toLocalTime().toString()).build();
-    }
-
-    public List<MasterScheduleTableDto> toGetMasterScheduleTableDto (List<AppointmentEntity> entities){
+    public List<MasterScheduleTableDto> toGetMasterScheduleTableDto(List<AppointmentEntity> entities) {
         return entities.stream().map(this::toMasterScheduleTableDto).collect(Collectors.toList());
+    }
+
+    private BookMasterDailyScheduleTableDto toBookMasterDailyScheduleTableDto(AppointmentEntity entity) {
+        return BookMasterDailyScheduleTableDto.builder().startTime(entity.getStartTime().toLocalDateTime().toLocalTime().toString()).endTime(entity.getStartTime().toLocalDateTime().plusSeconds(entity.getProcedure().getDuration().getSeconds()).toLocalTime().toString()).status(entity.getAppointmentStatus().toString()).build();
+    }
+
+    public List<BookMasterDailyScheduleTableDto> toBookMasterDailyScheduleTableDtos (List<AppointmentEntity> entities){
+        return entities.stream().map(this::toBookMasterDailyScheduleTableDto).collect(Collectors.toList());
     }
 }

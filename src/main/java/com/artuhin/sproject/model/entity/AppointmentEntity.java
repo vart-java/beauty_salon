@@ -30,7 +30,6 @@ public class AppointmentEntity {
     @JoinColumn(name = "client_id")
     private UserEntity client;
     private Timestamp startTime;
-    private Timestamp endTime;
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status")
     private AppointmentStatus appointmentStatus;

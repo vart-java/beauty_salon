@@ -1,19 +1,13 @@
 package com.artuhin.sproject.controller;
 
-import com.artuhin.sproject.model.dto.FullUserDto;
-import com.artuhin.sproject.model.dto.CommonUserDto;
-import com.artuhin.sproject.model.dto.MasterScheduleTableDto;
+import com.artuhin.sproject.model.dto.*;
 import com.artuhin.sproject.model.dto.generic.ApiResponseWrapper;
-import com.artuhin.sproject.model.entity.AppointmentEntity;
-import com.artuhin.sproject.model.entity.ProcedureEntity;
 import com.artuhin.sproject.model.entity.UserEntity;
 import com.artuhin.sproject.service.AppointmentService;
 import com.artuhin.sproject.service.ProcedureService;
 import com.artuhin.sproject.service.UserService;
 import com.artuhin.sproject.service.mapper.AppointmentMapper;
 import com.artuhin.sproject.service.mapper.UserMapper;
-import lombok.Data;
-import org.hibernate.type.LocalDateTimeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,9 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +32,8 @@ public class UserController {
     private AppointmentMapper appointmentMapper;
     @Autowired
     private AppointmentService appointmentService;
+    @Autowired
+    private ProcedureService procedureService;
 
     @PostMapping("/jquery/getdata")
     @ResponseBody
@@ -61,10 +55,9 @@ public class UserController {
 
     @GetMapping("/ratings")
     public String getMastersSpecializationRatings(Model model){
-        Map<ProcedureEntity, List<UserEntity>> masterSpecializationRatings = userService.getMastersSpecializationRatings();
-        model.addAttribute("masterSpecializationRatings", masterSpecializationRatings);
+        Map<CommonProcedureDto, List<MasterDto>> ratingMap = userMapper.getMastersRatingsAndBookModel(procedureService.getAll(), userService.getMasters());
+        model.addAttribute("masterSpecializationRatings", ratingMap);
         model.addAttribute("localDate", LocalDate.now());
-        model.addAttribute("dto", appointmentMapper.toCreateAppGetDto(appointmentService.getModel()));
-        return "master_ratings";
+        return "mastersRatingsAndBook";
     }
 }

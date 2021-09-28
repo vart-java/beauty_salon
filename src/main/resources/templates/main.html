@@ -34,12 +34,27 @@
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" th:href="@{/assets/css/carousel.css}">
 </head>
+
 <body>
-<p sec:authentication='principal.authorities'></p>
+
 <header>
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: #ecc2ff;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#" th:text="#{ADMINISTRATOR}">Session</a>
+            <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <a class="navbar-brand" href="#" th:text="#{ADMINISTRATOR}">Admin</a>
+            </div>
+            <div sec:authorize="hasRole('ROLE_MASTER')">
+                <a class="navbar-brand" href="#" th:text="#{MASTER}">Admin</a>
+            </div>
+            <div sec:authorize="hasRole('ROLE_CLIENT')">
+                <a class="navbar-brand" href="#" th:text="#{CLIENT}">Admin</a>
+            </div>
+            <div sec:authorize="!isAuthenticated()">
+                <a class="navbar-brand" th:text="#{GUEST}">Guest</a>
+            </div>
+            <div><a class="navbar-brand">|</a></div>
+
+            <a class="navbar-brand" href="#" sec:authentication="name">Name</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
                     aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -54,28 +69,52 @@
                            th:href="@{http://localhost:8080/api/procedures/table}"></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" th:text="#{menu_by_master_rat}"
-                           th:href="@{http://localhost:8080/api/users/ratings}"></a>
+                        <div sec:authorize="hasRole('ROLE_CLIENT')">
+                            <a class="nav-link active" aria-current="page" th:text="#{menu_by_master_rat}"
+                               th:href="@{http://localhost:8080/api/users/ratings}"></a>
+                        </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/logout}" th:text="#{menu_log_out}"> LOGOUT
-                        </a>
-                    </li>
-                    <li class="nav-item"><a class="nav-link" th:href="@{/api/appointments/get/admin}" th:text="#{menu_admin}">ADMIN MENU</a>
+                        <div sec:authorize="!isAuthenticated()">
+                            <a class="nav-link" th:href="@{/logout}" th:text="#{create_acc}"> LOGOUT</a>
+                        </div>
+                        <div sec:authorize="isAuthenticated()">
+                            <a class="nav-link" th:href="@{/logout}" th:text="#{menu_log_out}"> LOGOUT</a>
+                        </div>
                     </li>
                 </ul>
                 <ul class="navbar-nav me-md-0 my-5 my-lg-0 navbar-nav-scroll">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" th:text="#{menu_book}"
-                           th:href="@{http://localhost:8080/api/appointments/create/master}"></a>
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="nav-link active" th:href="@{/api/appointments/get/admin}" th:text="#{menu_admin}">ADMIN
+                                MENU</a>
+                        </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" th:text="#{menu_my_procedures}"
-                           th:href="@{http://localhost:8080/api/appointments/get/client}"></a>
+                        <div sec:authorize="hasRole('ROLE_CLIENT')">
+                            <a class="nav-link active" aria-current="page" th:text="#{menu_book}"
+                               th:href="@{http://localhost:8080/api/appointments/create/master}"></a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div sec:authorize="hasRole('ROLE_CLIENT')">
+                            <a class="nav-link active" aria-current="page" th:text="#{menu_my_procedures}"
+                               th:href="@{http://localhost:8080/api/appointments/get/client}"></a>
+                        </div>
+                        <div sec:authorize="hasRole('ROLE_MASTER')">
+                            <a class="nav-link active" aria-current="page" th:text="#{menu_my_procedures}"
+                               th:href="@{http://localhost:8080/api/appointments/get/master}"></a>
+                        </div>
+
                     </li>
                     <li>
-                        <a th:href="@{/main/?lang=ukr}" type="button" class="btn btn-primary">ukr</a>
-                        <a th:href="@{/main/?lang=en}" type="button" class="btn btn-primary">en</a>
+                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" th:checked="${#locale.toString() == 'en'}">
+                            <label class="btn btn-outline-secondary" for="btnradio1">EN</label>
+
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" th:checked="${#locale.toString() == 'ukr'} ? 'checked'">
+                            <label class="btn btn-outline-primary" for="btnradio2">УКР</label>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -194,6 +233,25 @@
         </footer>
     </div>
 </main>
-<script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/assets/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/assets/js/jquery-3.6.0.js}"></script>
+<script type="text/javascript">
+    $('#btnradio2').click(function() {
+        var x = new XMLHttpRequest();
+        x.open("GET", "/main?lang=ukr", true);
+        x.onload = function (){
+        }
+        x.send(null);
+        location.reload();
+    });
+    $('#btnradio1').click(function() {
+        var x = new XMLHttpRequest();
+        x.open("GET", "/main?lang=en", true);
+        x.onload = function (){
+        }
+        x.send(null);
+        location.reload();
+    });
+</script>
 </body>
 </html>

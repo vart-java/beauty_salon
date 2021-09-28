@@ -1,17 +1,12 @@
 drop schema if exists bs cascade;
 create schema if not exists bs;
 
-create table if not exists bs.roles
-(
-    id           bigserial primary key,
-    name         varchar   not null
-);
-
 create table if not exists bs.users
 (
     id           bigserial primary key,
     login        varchar not null,
     password     varchar not null,
+    role         varchar not null,
     rating       double precision,
     recall_count integer
 );
@@ -30,7 +25,6 @@ create table if not exists bs.appointments
     master_id    bigint    not null,
     client_id    bigint    not null,
     start_time   timestamp not null,
-    end_time     timestamp not null,
     status       varchar   not null
 );
 
@@ -60,17 +54,3 @@ alter table bs.users_procedures
     add foreign key (procedure_id)
         references bs.procedures (id);
 
-create table if not exists bs.users_roles
-(
-    user_id      bigint not null,
-    role_id      bigint not null,
-    primary key (user_id, role_id)
-);
-
-alter table bs.users_roles
-    add foreign key (user_id)
-        references bs.users (id);
-
-alter table bs.users_roles
-    add foreign key (role_id)
-        references bs.roles (id);

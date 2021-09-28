@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -49,7 +50,6 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .master(master)
                 .procedure(procedure)
                 .startTime(start)
-                .endTime(end)
                 .appointmentStatus(AppointmentStatus.DECLARED)
                 .build();
         return appointmentRepository.save(newAppointment);
@@ -73,6 +73,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         for (AppointmentStatus as : AppointmentStatus.values()) {
             if (appointmentStatus.ordinal() + 1 == as.ordinal()) {
                 appointmentStatus = as;
+                break;
             }
         }
         AppointmentEntity appointment = appointmentRepository.getById(dto.getId());
@@ -118,12 +119,21 @@ public class AppointmentServiceImpl implements AppointmentService {
         int endHour = end.toLocalDateTime().getHour();
         long countOfCollisions = appointmentRepository.findAllByMaster(master).stream()
                 .filter(a -> (a.getStartTime().after(start) && a.getStartTime().before(end) ||
-                        (a.getEndTime().after(start) && a.getEndTime().before(end))) ||
+                        (getEndDateOfProcedure(a.getStartTime(), a.getProcedure().getDuration()).after(start) && getEndDateOfProcedure(a.getStartTime(), a.getProcedure().getDuration()).before(end))) ||
                         a.getStartTime().equals(start) ||
-                        a.getEndTime().equals(end)).count();
-        if (start.toLocalDateTime().isBefore(LocalDateTime.now()) || startHour < 8 || endHour > 20 || countOfCollisions > 0) {
+                        getEndDateOfProcedure(a.getStartTime(), a.getProcedure().getDuration()).equals(end)).count();
+        if (start.toLocalDateTime().isBefore(LocalDateTime.now()) || startHour < 11 || endHour > 20 || countOfCollisions > 0) {
             throw new ProcedureCanNotBeArrangedException(ExceptionMessageTemplates.PROCEDURE_CAN_NOT_BE_ARRANGED_MESSAGE);
         }
+    }
+
+    public boolean updateTimeAppointment(long id, String time) {
+        AppointmentEntity appointment = appointmentRepository.getById(id);
+        LocalDateTime newStart = LocalDateTime.of(appointment.getStartTime().toLocalDateTime().toLocalDate(), LocalTime.parse(time));
+        checkIfMasterIsFreeThisTime(appointment.getMaster(), Timestamp.valueOf(newStart), Timestamp.valueOf(newStart.plusSeconds(appointment.getProcedure().getDuration().getSeconds())));
+        appointment.setStartTime(Timestamp.valueOf(newStart));
+        appointmentRepository.save(appointment);
+        return true;
     }
 
 }

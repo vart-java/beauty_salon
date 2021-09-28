@@ -1,9 +1,9 @@
-package com.artuhin.sproject.controller;
+package com.artuhin.sproject.model.dto;
 
 import lombok.Data;
 
 @Data
-class AjaxDto {
+public class AjaxDto {
     private Long id;
     private String date;
 }

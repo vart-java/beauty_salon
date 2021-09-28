@@ -9,7 +9,8 @@
 <body class="text-center">
 <main class="form-signin">
     <form action="/login" method="post">
-        <img class="mb-4" th:src="@{/assets/images/authorization_logo-removebg-preview.png}" alt="" width="220" height="220">
+        <img class="mb-4" th:src="@{/assets/images/authorization_logo-removebg-preview.png}" alt="" width="220"
+             height="220">
         <h1 class="h3 mb-3 fw-normal" th:text="#{sign_in_please}">sign_in_please</h1>
 
         <div class="form-floating">
@@ -20,7 +21,7 @@
         <div class="form-floating">
             <input type="password" class="form-control" placeholder="Password"
                    id="password" name="password"
-                   pattern="[a-zA-Zа-яА-ЯіІїЇєЄ0-9]+" minlength="5" maxlength="8">
+                   pattern="[a-zA-Zа-яА-ЯіІїЇєЄ0-9]+" minlength="5" maxlength="16">
             <label for="password">Password</label>
         </div>
         <button class="w-100 btn btn-primary" type="submit" th:text="#{sign_in}">
@@ -32,17 +33,29 @@
     <button class="w-100 btn btn-primary" id="createBtn" type="submit" th:text="#{create_acc}">
         sign_in
     </button>
+    <span id="error_message" class="text-danger" th:text="#{invalid_login}"></span>
+    <div id="success_message" class="text-success" th:text="#{successreg}">Success message</div>
     <p></p>
     <a class="btn w-100 btn btn-secondary" id="asGuest" type="submit" th:text="#{as_guest}" th:href="@{/main}">
         sign_in
     </a>
+    <p></p>
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
+               th:checked="${#locale.toString() == 'en'}">
+        <label class="btn btn-outline-secondary" for="btnradio1">EN</label>
+
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+               th:checked="${#locale.toString() == 'ukr'} ? 'checked'">
+        <label class="btn btn-outline-primary" for="btnradio2">УКР</label>
+    </div>
 
     <p class="mt-5 mb-3 text-muted">&copy; 2021</p>
 </main>
 <script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
 <script th:src="@{/assets/js/jquery-3.6.0.js}"></script>
 <script>
-    $("#createBtn").click(function() {
+    $("#createBtn").click(function () {
         var sendData = {
             login: $('#login').val(),
             password: $('#password').val()
@@ -51,9 +64,34 @@
             method: "POST",
             url: "/registration",
             data: JSON.stringify(sendData),
-            contentType: "application/json; charset=utf-8"
+            contentType: "application/json; charset=utf-8",
+            success: function (data, status, xhr) {
+                $('#success_message').fadeIn().delay(3000).fadeOut();
+            },
+            error: function () {
+                alert('Problem getting data');
+            }
         });
     })
 </script>
+<script type="text/javascript">
+    $('#btnradio2').click(function () {
+        var x = new XMLHttpRequest();
+        x.open("GET", "/main?lang=ukr", true);
+        x.onload = function () {
+        }
+        x.send(null);
+        location.reload();
+    });
+    $('#btnradio1').click(function () {
+        var x = new XMLHttpRequest();
+        x.open("GET", "/main?lang=en", true);
+        x.onload = function () {
+        }
+        x.send(null);
+        location.reload();
+    });
+</script>
+
 </body>
 </html>

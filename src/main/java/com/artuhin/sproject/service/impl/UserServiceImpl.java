@@ -1,8 +1,8 @@
 package com.artuhin.sproject.service.impl;
 
+import com.artuhin.sproject.model.Role;
 import com.artuhin.sproject.model.dto.RegistrationDto;
 import com.artuhin.sproject.model.entity.ProcedureEntity;
-import com.artuhin.sproject.model.entity.RoleEntity;
 import com.artuhin.sproject.service.ProcedureService;
 import com.artuhin.sproject.service.UserService;
 import com.artuhin.sproject.exception.UserCanNotBeUpdatedException;
@@ -12,9 +12,7 @@ import com.artuhin.sproject.repository.UserRepository;
 import com.artuhin.sproject.util.ExceptionMessageTemplates;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -58,7 +56,7 @@ public class UserServiceImpl implements UserService {
         }
         UserEntity newUser = new UserEntity();
         newUser.setLogin(registrationDto.getLogin());
-        newUser.setRoles(Collections.singleton(RoleEntity.builder().id(3L).name("CLIENT").build()));
+        newUser.setRole(Role.CLIENT);
         newUser.setPassword(bCryptPasswordEncoder.encode(registrationDto.getPassword()));
         userRepository.save(newUser);
         return true;
@@ -72,8 +70,8 @@ public class UserServiceImpl implements UserService {
                 .ifPresent(userToUpdate::setLogin);
         updateWithOpt.map(UserEntity::getPassword)
                 .ifPresent(userToUpdate::setPassword);
-        updateWithOpt.map(UserEntity::getRoles)
-                .ifPresent(userToUpdate::setRoles);
+        updateWithOpt.map(UserEntity::getRole)
+                .ifPresent(userToUpdate::setRole);
         updateWithOpt.map(UserEntity::getRating)
                 .ifPresent(userToUpdate::setRating);
         updateWithOpt.map(UserEntity::getRecallCount)

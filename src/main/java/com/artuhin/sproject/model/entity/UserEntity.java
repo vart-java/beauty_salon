@@ -1,14 +1,15 @@
 package com.artuhin.sproject.model.entity;
 
+import com.artuhin.sproject.model.Role;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.Set;
 
 @Data
@@ -22,21 +23,14 @@ import java.util.Set;
 public class UserEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Size(min=2, message = "at least 5 characters")
+    @Size(min = 2, message = "at least 5 characters")
     private String login;
-    @Size(min=2, message = "at least 5 characters")
+    @Size(min = 2, message = "at least 5 characters")
     private String password;
-    @ManyToMany
-    @Fetch(FetchMode.JOIN)
-    @JoinTable(
-            schema = "bs",
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<RoleEntity> roles;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     private double rating;
     private int recallCount;
     @ManyToMany
@@ -52,12 +46,12 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return Collections.singleton(getRole());
     }
 
     @Override
     public String getUsername() {
-        return login;
+        return login.substring(0, login.indexOf('@'));
     }
 
     @Override
