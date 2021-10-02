@@ -7,7 +7,6 @@ import com.artuhin.sproject.model.dto.AppointmentSwitchDto;
 import com.artuhin.sproject.model.dto.CreateAppointmentPostDto;
 import com.artuhin.sproject.repository.AppointmentRepository;
 import com.artuhin.sproject.service.UserService;
-import com.artuhin.sproject.model.AppointmentCreateGetModel;
 import com.artuhin.sproject.model.entity.AppointmentEntity;
 import com.artuhin.sproject.model.entity.ProcedureEntity;
 import com.artuhin.sproject.model.entity.UserEntity;
@@ -20,9 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -52,7 +53,12 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .startTime(start)
                 .appointmentStatus(AppointmentStatus.DECLARED)
                 .build();
-        return appointmentRepository.save(newAppointment);
+        try {
+            return appointmentRepository.save(newAppointment);
+        } catch (Exception e) {
+            throw new ProcedureCanNotBeArrangedException(ExceptionMessageTemplates.PROCEDURE_CAN_NOT_BE_ARRANGED_MESSAGE);
+        }
+
     }
 
     @Override
@@ -93,15 +99,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentRepository.deleteById(dto.getId());
     }
 
-    public AppointmentCreateGetModel getModel() {
-        List<UserEntity> masters = userService.getMasters();
-        List<ProcedureEntity> procedures = procedureService.getAll();
-        return AppointmentCreateGetModel.builder()
-                .masters(masters)
-                .procedures(procedures)
-                .build();
-    }
-
 
     private Timestamp getEndDateOfProcedure(Timestamp startDate, Duration duration) {
         return Timestamp.valueOf(startDate.toLocalDateTime().plusMinutes(duration.toMinutes()));
@@ -127,13 +124,31 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-    public boolean updateTimeAppointment(long id, String time) {
+    @Override
+    public void updateTimeAppointment(long id, String time) {
         AppointmentEntity appointment = appointmentRepository.getById(id);
         LocalDateTime newStart = LocalDateTime.of(appointment.getStartTime().toLocalDateTime().toLocalDate(), LocalTime.parse(time));
         checkIfMasterIsFreeThisTime(appointment.getMaster(), Timestamp.valueOf(newStart), Timestamp.valueOf(newStart.plusSeconds(appointment.getProcedure().getDuration().getSeconds())));
         appointment.setStartTime(Timestamp.valueOf(newStart));
-        appointmentRepository.save(appointment);
-        return true;
+        try {
+            appointmentRepository.save(appointment);
+        } catch (Exception e) {
+            throw new ProcedureCanNotBeArrangedException(ExceptionMessageTemplates.PROCEDURE_CAN_NOT_BE_ARRANGED_MESSAGE);
+        }
     }
 
+    @Override
+    public List<AppointmentEntity> getDataForEmail(LocalDate localDate) {
+        return appointmentRepository
+                .findAll()
+                .stream()
+                .filter(a->a.getStartTime().toLocalDateTime().getDayOfYear() <= (localDate.getDayOfYear()-1))
+                .filter(a->a.getAppointmentStatus().equals(AppointmentStatus.PAID))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public AppointmentEntity getById (long id){
+        return appointmentRepository.getById(id);
+    }
 }

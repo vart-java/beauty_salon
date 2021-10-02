@@ -3,6 +3,7 @@ package com.artuhin.sproject.controller;
 import com.artuhin.sproject.model.dto.RegistrationDto;
 import com.artuhin.sproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +21,12 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String addUser(@RequestBody RegistrationDto registrationDto, Model model) {
+    public ResponseEntity<String> addUser(@RequestBody RegistrationDto registrationDto, Model model) {
         if (!userService.saveUser(registrationDto)){
             model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return "login";
+            return ResponseEntity.badRequest().build();
         }
-        return "main";
+        return ResponseEntity.ok("ok");
     }
 }
 

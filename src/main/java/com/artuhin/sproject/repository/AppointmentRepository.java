@@ -10,6 +10,7 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<AppointmentEntity, Long> {
 
+
     List<AppointmentEntity> findAllByMaster(UserEntity master);
     List<AppointmentEntity> findAllByClient(UserEntity client);
 }

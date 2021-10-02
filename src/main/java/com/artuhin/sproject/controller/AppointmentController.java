@@ -1,6 +1,6 @@
 package com.artuhin.sproject.controller;
 
-import com.artuhin.sproject.exception.MasterCanNotPerformProcedureException;
+import com.artuhin.sproject.model.AppointmentStatus;
 import com.artuhin.sproject.model.dto.AppointmentSwitchDto;
 import com.artuhin.sproject.model.dto.CreateAppointmentPostDto;
 import com.artuhin.sproject.model.entity.UserEntity;
@@ -21,7 +21,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/api/appointments")
@@ -44,7 +46,7 @@ public class AppointmentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) authentication.getPrincipal();
         appointmentService.createAppointment(CreateAppointmentPostDto.builder().masterId(masterIn).clientId(user.getId()).procedureName(skillIn).startDate(Timestamp.valueOf(LocalDateTime.of(LocalDate.parse(dateIn), LocalTime.parse(timeIn)))).build());
-        model.addAttribute("userAppointments", appointmentMapper.toAppointmentGetDtoList(appointmentService.getClientAppointments(2L)));
+        model.addAttribute("userAppointments", appointmentMapper.toAppointmentGetDtoList(appointmentService.getClientAppointments(user.getId())));
         return "clientProcedures";
     }
 
@@ -62,10 +64,9 @@ public class AppointmentController {
     @Secured("ROLE_CLIENT")
     @GetMapping("create/master")
     public String createAppointment(Model model) {
-        model.addAttribute("dateAppointment", LocalDateTime.now().toLocalDate());
+        model.addAttribute("dateAppointment", LocalDateTime.now().toLocalDate().plusDays(1));
         model.addAttribute("thisDay", LocalDate.now());
         model.addAttribute("allMasters", userMapper.toFullUserDtoList(userService.getMasters()));
-        model.addAttribute("masterName", userMapper.toCommonUserDto(userService.getMasters().stream().findAny().orElseThrow(()->new MasterCanNotPerformProcedureException("No master"))).getLogin());
         return "bookAndMasterSchedule";
     }
 
@@ -84,7 +85,7 @@ public class AppointmentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) authentication.getPrincipal();
         model.addAttribute("masterAppointments", appointmentMapper.toAppointmentGetDtoList(appointmentService.getMasterAppointments(user.getId())));
-        model.addAttribute("masterTodayAppointments", appointmentMapper.toAppointmentGetDtoList(appointmentService.getMasterAppointments(user.getId()).stream().filter(a->a.getStartTime().toLocalDateTime().getDayOfYear()==LocalDateTime.now().getDayOfYear()).collect(Collectors.toList())));
+        model.addAttribute("masterTodayAppointments", appointmentMapper.toAppointmentGetDtoList(appointmentService.getMasterAppointments(user.getId()).stream().filter(a -> a.getStartTime().toLocalDateTime().getDayOfYear() == LocalDateTime.now().getDayOfYear()).collect(Collectors.toList())));
         return "masterProcedures";
     }
 
@@ -111,11 +112,28 @@ public class AppointmentController {
         }
         if (status.equals("settime")) {
             appointmentService.updateTimeAppointment(id, time);
-        }
-        else {
+        } else {
             appointmentService.switchStatus(AppointmentSwitchDto.builder().id(id).build());
         }
         model.addAttribute("allAppointments", appointmentMapper.toAppointmentGetDtoList(appointmentService.getAll()));
         return "redirect:/api/appointments/get/admin";
+    }
+
+    @GetMapping("get/rate/{id}")
+    public String getRateAppointments(@PathVariable("id") long id, Model model) {
+        List<Integer> range = IntStream.rangeClosed(1, 10)
+                .boxed().collect(Collectors.toList());
+        model.addAttribute("range", range);
+        model.addAttribute("appointment", appointmentMapper.toAppointmentGetDto(appointmentService.getById(id)));
+        return "ratingPage";
+    }
+
+    @PostMapping("get/rate/{id}")
+    public String setRateAppointments(@PathVariable("id") long appointmentId, @ModelAttribute("masterId") long masterId, @ModelAttribute("rating") int rating) {
+        if (appointmentMapper.toAppointmentGetDto(appointmentService.getById(appointmentId)).getStatus().equals(AppointmentStatus.PAID)) {
+            userService.updateRating(masterId, rating);
+            appointmentService.switchStatus(AppointmentSwitchDto.builder().id(appointmentId).build());
+        }
+        return "main";
     }
 }

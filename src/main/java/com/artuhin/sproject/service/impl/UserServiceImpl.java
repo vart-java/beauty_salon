@@ -1,16 +1,16 @@
 package com.artuhin.sproject.service.impl;
 
+import com.artuhin.sproject.exception.UserCanNotBeUpdatedException;
+import com.artuhin.sproject.exception.UsersNotFoundException;
 import com.artuhin.sproject.model.Role;
 import com.artuhin.sproject.model.dto.RegistrationDto;
-import com.artuhin.sproject.model.entity.ProcedureEntity;
-import com.artuhin.sproject.service.ProcedureService;
 import com.artuhin.sproject.service.UserService;
-import com.artuhin.sproject.exception.UserCanNotBeUpdatedException;
 import com.artuhin.sproject.exception.UserNotFoundException;
 import com.artuhin.sproject.model.entity.UserEntity;
 import com.artuhin.sproject.repository.UserRepository;
 import com.artuhin.sproject.util.ExceptionMessageTemplates;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,15 +27,11 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private ProcedureService procedureService;
-
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Override
     public List<UserEntity> getAll() {
@@ -63,6 +59,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateRating(long masterId, int rating) {
+        UserEntity master = getUserById(masterId);
+        int recallCount = master.getRecallCount();
+        double masterRating = master.getRating();
+        if (masterRating == 0 || recallCount == 0) {
+            master.setRating(rating);
+            master.setRecallCount(1);
+        } else {
+            master.setRating(Precision.round(((masterRating * recallCount + rating) / (recallCount + 1)), 2));
+            master.setRecallCount(recallCount + 1);
+        }
+        userRepository.save(master);
+    }
+
+    @Override
     public UserEntity updateUser(Long id, UserEntity updateWith) {
         UserEntity userToUpdate = getUserById(id);
         Optional<UserEntity> updateWithOpt = Optional.of(updateWith);
@@ -87,25 +98,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserEntity> getMasters() {
-        return getAll().stream().filter(userEntity -> ObjectUtils.isNotEmpty(userEntity.getSkills()))
-                .collect(Collectors.toList());
+        try {
+            return getAll().stream().filter(userEntity -> ObjectUtils.isNotEmpty(userEntity.getSkills()))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new UsersNotFoundException(ExceptionMessageTemplates.USERS_NOT_FOUND_MESSAGE);
+        }
     }
 
-    @Override
-    public Map<ProcedureEntity, List<UserEntity>> getMastersSpecializationRatings() {
-        Map<ProcedureEntity, List<UserEntity>> ratingMap = new HashMap<>();
-        procedureService.getAll().forEach(p -> ratingMap.put(p, getMasters().stream().filter(m -> m.getSkills().stream().filter(s->s.equals(p)).findAny().isPresent()).sorted(Comparator.comparingDouble(UserEntity::getRating).reversed()).collect(Collectors.toList())));
-        return ratingMap;
-    }
-
+//    ask about how this shit is working
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity user = userRepository.findUserEntityByLogin(username);
-
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-
         return user;
     }
 }

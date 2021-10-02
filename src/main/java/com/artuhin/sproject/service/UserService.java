@@ -5,7 +5,6 @@ import com.artuhin.sproject.model.entity.ProcedureEntity;
 import com.artuhin.sproject.model.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,8 @@ public interface UserService extends UserDetailsService {
      * Get all masters group by specialization and sort by rating.
      * @return
      */
-    Map<ProcedureEntity, List<UserEntity>> getMastersSpecializationRatings ();
 
     boolean saveUser(RegistrationDto user);
+
+    void updateRating (long masterId, int rating);
 }

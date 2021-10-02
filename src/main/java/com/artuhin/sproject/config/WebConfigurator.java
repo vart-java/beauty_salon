@@ -1,15 +1,11 @@
 package com.artuhin.sproject.config;
 
 import com.artuhin.sproject.service.UserService;
-import com.artuhin.sproject.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.MessageSourceAccessor;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
@@ -29,8 +25,6 @@ import java.util.Locale;
 public class WebConfigurator implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;
-    @Autowired
-    private UserService userService;
 
     @Autowired
     public WebConfigurator(ApplicationContext applicationContext) {
@@ -98,7 +92,7 @@ public class WebConfigurator implements WebMvcConfigurer {
     }
 
     @Bean
-    public UserDetailsService getUserDetailsService(){
+    public UserDetailsService getUserDetailsService(UserService userService){
         return userService;
     }
 }

@@ -138,9 +138,10 @@
                     <div class="carousel-caption text-start">
                         <h1 th:text="#{hair_coloring}">HAIRCOLORING</h1>
                         <p th:text="#{main_hair_coloring_desc}">HCDESCRIPTION</p>
-                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
-                            UP</a>
-                        </p>
+                        <div sec:authorize="hasRole('ROLE_CLIENT')">
+                            <p><a class="btn btn-lg btn-primary" th:href="@{/api/users/ratings}" th:text="#{main_sign_up_now}">SIGN
+                            UP</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -150,9 +151,10 @@
                     <div class="carousel-caption">
                         <h1 th:text="#{face_massage}">FACEMASSAGE</h1>
                         <p th:text="#{main_face_massage_desc}">FACEMASSAGEDESC</p>
-                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
-                            UP</a>
-                        </p>
+                        <div sec:authorize="hasRole('ROLE_CLIENT')">
+                            <p><a class="btn btn-lg btn-primary" th:href="@{/api/users/ratings}" th:text="#{main_sign_up_now}">SIGN
+                                UP</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -162,9 +164,10 @@
                     <div class="carousel-caption">
                         <h1 th:text="#{eyelash_extension}">EYELASHEXTENSION</h1>
                         <p th:text="#{main_eyelash_extension_desc}">EYELASHEXTENSION</p>
-                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
-                            UP</a>
-                        </p>
+                        <div sec:authorize="hasRole('ROLE_CLIENT')">
+                            <p><a class="btn btn-lg btn-primary" th:href="@{/api/users/ratings}" th:text="#{main_sign_up_now}">SIGN
+                                UP</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -174,9 +177,10 @@
                     <div class="carousel-caption text-end">
                         <h1 th:text="#{nail_staining}">NAILSTAINING</h1>
                         <p th:text="#{main_eyelash_extension_desc}">NAILSTAINING</p>
-                        <p><a class="btn btn-lg btn-primary" th:href="@{/api/create}" th:text="#{main_sign_up_now}">SIGN
-                            UP</a>
-                        </p>
+                        <div sec:authorize="hasRole('ROLE_CLIENT')">
+                            <p><a class="btn btn-lg btn-primary" th:href="@{/api/users/ratings}" th:text="#{main_sign_up_now}">SIGN
+                                UP</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -198,22 +202,28 @@
                 <img th:src="@{/assets/images/main_master_1.jpg}" class="img-fluid" alt="">
                 <h2 th:text="#{main_best_master}">BESTMASTER</h2>
                 <p th:text="#{main_difficult_appoint}">DIFFICULT</p>
-                <p><a class="btn btn-secondary" th:text="#{main_view_schedule}" th:href="@{/api/create}"> VIEW
-                    RATINGS</a></p>
+                <div sec:authorize="hasRole('ROLE_CLIENT')">
+                    <p><a class="btn btn-lg btn-primary" th:href="@{/api/users/ratings}" th:text="#{main_sign_up_now}">SIGN
+                        UP</a></p>
+                </div>
             </div>
             <div class="col-lg-4">
                 <img th:src="@{/assets/images/main_master_2.jpg}" class="img-fluid" alt="">
                 <h2 th:text="#{main_best_master}">BESTMASTER</h2>
                 <p th:text="#{main_difficult_appoint}">DIFFICULT</p>
-                <p><a class="btn btn-secondary" th:text="#{main_view_schedule}" th:href="@{/api/create}"> VIEW
-                    RATINGS</a></p>
+                <div sec:authorize="hasRole('ROLE_CLIENT')">
+                    <p><a class="btn btn-lg btn-primary" th:href="@{/api/users/ratings}" th:text="#{main_sign_up_now}">SIGN
+                        UP</a></p>
+                </div>
             </div><!-- /.col-lg-4 -->
             <div class="col-lg-4">
                 <img th:src="@{/assets/images/main_master_3.jpg}" class="img-fluid" alt="">
                 <h2 th:text="#{main_best_master}">BESTMASTER</h2>
                 <p th:text="#{main_difficult_appoint}">DIFFICULT</p>
-                <p><a class="btn btn-secondary" th:text="#{main_view_schedule}" th:href="@{/api/create}"> VIEW
-                    RATINGS</a></p>
+                <div sec:authorize="hasRole('ROLE_CLIENT')">
+                    <p><a class="btn btn-lg btn-primary" th:href="@{/api/users/ratings}" th:text="#{main_sign_up_now}">SIGN
+                        UP</a></p>
+                </div>
             </div><!-- /.col-lg-4 -->
         </div><!-- /.row -->
 

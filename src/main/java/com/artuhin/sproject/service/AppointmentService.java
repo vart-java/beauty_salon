@@ -1,11 +1,10 @@
 package com.artuhin.sproject.service;
 
-import com.artuhin.sproject.model.AppointmentStatus;
 import com.artuhin.sproject.model.dto.AppointmentSwitchDto;
 import com.artuhin.sproject.model.dto.CreateAppointmentPostDto;
 import com.artuhin.sproject.model.entity.AppointmentEntity;
-import com.artuhin.sproject.model.AppointmentCreateGetModel;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface AppointmentService {
@@ -32,11 +31,13 @@ public interface AppointmentService {
 
     void switchStatus(AppointmentSwitchDto dto);
 
-    AppointmentCreateGetModel getModel();
-
     List<AppointmentEntity> getAll();
 
     void delete (AppointmentSwitchDto dto);
 
-    boolean updateTimeAppointment(long id, String time);
+    void updateTimeAppointment(long id, String time);
+
+    List<AppointmentEntity> getDataForEmail(LocalDate localDate);
+
+    AppointmentEntity getById(long id);
 }

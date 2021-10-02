@@ -10,4 +10,5 @@ public class ExceptionMessageTemplates {
     public static final String PROCEDURE_NOT_FOUND_MESSAGE = "Sorry, procedure with such id not found.";
     public static final String PROCEDURE_CAN_NOT_BE_ARRANGED_MESSAGE = "Sorry, procedure can not be arranged at this time for this master.";
     public static final String MASTER_CAN_NOT_PERFORM_PROCEDURE_MESSAGE = "Sorry, this master can not perform %s";
+    public static final String USERS_NOT_FOUND_MESSAGE = "Sorry, this users not found.";
 }

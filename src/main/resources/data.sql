@@ -83,10 +83,10 @@ insert into bs.appointments(procedure_id, master_id, client_id, start_time, stat
 values (1, 4, 2, '2021-09-28 13:00:00', 'CONFIRMED');
 
 insert into bs.appointments(procedure_id, master_id, client_id, start_time, status)
-values (1, 3, 2, '2021-09-29 15:00:00', 'FINISHED');
+values (1, 3, 2, '2021-09-30 15:00:00', 'FINISHED');
 
 insert into bs.appointments(procedure_id, master_id, client_id, start_time, status)
-values (1, 3, 2, '2021-09-29 13:00:00', 'CONFIRMED');
+values (1, 3, 2, '2021-09-30 13:00:00', 'PAID');
 
 insert into bs.appointments(procedure_id, master_id, client_id, start_time, status)
 values (1, 4, 2, '2021-09-29 15:00:00',  'RATED');

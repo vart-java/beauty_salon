@@ -4,7 +4,6 @@ import com.artuhin.sproject.model.AppointmentStatus;
 import lombok.Builder;
 import lombok.Data;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data

@@ -3,9 +3,7 @@ package com.artuhin.sproject.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.interval.PostgreSQLIntervalType;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.data.repository.cdi.Eager;
 
 import javax.persistence.*;
 import java.time.Duration;

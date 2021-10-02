@@ -5,7 +5,7 @@ import com.artuhin.sproject.model.dto.CommonProcedureDto;
 import com.artuhin.sproject.model.dto.CommonUserDto;
 import com.artuhin.sproject.model.dto.FullUserDto;
 import com.artuhin.sproject.model.dto.MasterDto;
-import com.artuhin.sproject.model.pages.MastersTableModel;
+import com.artuhin.sproject.model.dto.MastersTableDto;
 import com.artuhin.sproject.model.entity.ProcedureEntity;
 import com.artuhin.sproject.model.entity.UserEntity;
 import org.apache.commons.lang3.ObjectUtils;
@@ -22,13 +22,13 @@ public class UserMapper {
     @Autowired
     private ProcedureMapper procedureMapper;
 
-    private Map<String, Consumer<List<MastersTableModel>>> actionMap;
+    private Map<String, Consumer<List<MastersTableDto>>> actionMap;
 
     public UserMapper() {
         actionMap = new HashMap<>();
-        actionMap.put("procedure", mastersRowDtos -> mastersRowDtos.sort(Comparator.comparing(MastersTableModel::getProcedureName)));
-        actionMap.put("master", mastersRowDtos -> mastersRowDtos.sort(Comparator.comparing(MastersTableModel::getMasterName)));
-        actionMap.put("rating", mastersRowDtos -> mastersRowDtos.sort(Comparator.comparingDouble(MastersTableModel::getRating).reversed()));
+        actionMap.put("procedure", mastersRowDtos -> mastersRowDtos.sort(Comparator.comparing(MastersTableDto::getProcedureName)));
+        actionMap.put("master", mastersRowDtos -> mastersRowDtos.sort(Comparator.comparing(MastersTableDto::getMasterName)));
+        actionMap.put("rating", mastersRowDtos -> mastersRowDtos.sort(Comparator.comparingDouble(MastersTableDto::getRating).reversed()));
     }
 
     public CommonUserDto toCommonUserDto(UserEntity userEntity) {
@@ -80,25 +80,25 @@ public class UserMapper {
                 .collect(Collectors.toList());
     }
 
-    public List<MastersTableModel> toMastersRowDtoList(List<UserEntity> entities) {
+    public List<MastersTableDto> toMastersRowDtoList(List<UserEntity> entities) {
         if (ObjectUtils.isEmpty(entities)) {
             return Collections.emptyList();
         }
-        List<MastersTableModel> mastersTableModels = new ArrayList<>();
+        List<MastersTableDto> mastersTableDtos = new ArrayList<>();
         for (UserEntity ue : entities) {
             for (ProcedureEntity pe : ue.getSkills()) {
-                mastersTableModels.add(MastersTableModel.builder().masterName(ue.getLogin().substring(0, ue.getLogin().indexOf('@'))).procedureName(pe.getName()).rating(ue.getRating()).build());
+                mastersTableDtos.add(MastersTableDto.builder().masterName(ue.getLogin().substring(0, ue.getLogin().indexOf('@'))).procedureName(pe.getName()).rating(ue.getRating()).build());
             }
         }
-        return mastersTableModels;
+        return mastersTableDtos;
     }
 
-    public List<MastersTableModel> sortMastersRowDtoList(String key, List<MastersTableModel> list) {
+    public List<MastersTableDto> sortMastersRowDtoList(String key, List<MastersTableDto> list) {
         actionMap.get(key).accept(list);
         return list;
     }
 
-    public List<MastersTableModel> filterMasterRowDtoList(String filter, String by, List<MastersTableModel> list) {
+    public List<MastersTableDto> filterMasterRowDtoList(String filter, String by, List<MastersTableDto> list) {
         if (filter.equals("procedure")) {
             return list.stream().filter(m -> m.getProcedureName().equals(by)).collect(Collectors.toList());
         }
@@ -125,7 +125,7 @@ public class UserMapper {
 
     public Map<CommonProcedureDto, List<MasterDto>> getMastersRatingsAndBookModel(List<ProcedureEntity> procedureEntities, List<UserEntity> userEntities) {
         Map<CommonProcedureDto, List<MasterDto>> ratingMap = new HashMap<>();
-        procedureEntities.forEach(p -> ratingMap.put(procedureMapper.toCommonProcedureDto(p), userEntities.stream().filter(m -> m.getSkills().stream().filter(s -> s.equals(p)).findAny().isPresent()).sorted(Comparator.comparingDouble(UserEntity::getRating).reversed()).map(this::toMasterDto).collect(Collectors.toList())));
+        procedureEntities.forEach(p -> ratingMap.put(procedureMapper.toCommonProcedureDto(p), userEntities.stream().filter(m -> m.getSkills().stream().anyMatch(s -> s.equals(p))).sorted(Comparator.comparingDouble(UserEntity::getRating).reversed()).map(this::toMasterDto).collect(Collectors.toList())));
         return ratingMap;
     }
 }

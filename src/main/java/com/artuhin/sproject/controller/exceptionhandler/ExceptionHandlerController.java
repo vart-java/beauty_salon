@@ -1,8 +1,7 @@
-package com.artuhin.sproject.controller.exceptionHandler;
+package com.artuhin.sproject.controller.exceptionhandler;
 
 import com.artuhin.sproject.exception.*;
-import com.artuhin.sproject.model.dto.generic.ErrorDto;
-import com.artuhin.sproject.model.dto.generic.ApiResponseWrapper;
+import com.artuhin.sproject.model.dto.ErrorDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,7 +18,7 @@ import java.util.List;
 public class ExceptionHandlerController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponseWrapper> validationError(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorDto> validationError(MethodArgumentNotValidException ex) {
         List<String> errors = new ArrayList<>();
         BindingResult bindingResult = ex.getBindingResult();
         bindingResult.getFieldErrors().forEach(fieldError -> errors.add(fieldError.getField()));
@@ -29,11 +28,11 @@ public class ExceptionHandlerController {
     @ExceptionHandler({UserNotFoundException.class, UserCanNotBeUpdatedException.class,
             ProcedureCanNotBeArrangedException.class, ProcedureNotFoundException.class,
             MasterCanNotPerformProcedureException.class})
-    public ResponseEntity<ApiResponseWrapper> userNotFoundError(RuntimeException ex) {
+    public ResponseEntity<ErrorDto> userNotFoundError(RuntimeException ex) {
         return badRequest(new ErrorDto(ex.getMessage(), Collections.emptyList()));
     }
 
-    private ResponseEntity<ApiResponseWrapper> badRequest(ErrorDto error) {
-        return ResponseEntity.badRequest().body(new ApiResponseWrapper<>(error));
+    private ResponseEntity<ErrorDto> badRequest(ErrorDto error) {
+        return ResponseEntity.badRequest().body(error);
     }
 }

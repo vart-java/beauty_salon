@@ -31,6 +31,6 @@ public class ProcedureServiceImpl implements ProcedureService {
 
     @Override
     public ProcedureEntity getProcedureByName(String name) {
-        return procedureRepository.findAll().stream().filter(p->p.getName().equals(name)).findAny().orElseThrow(() -> new ProcedureNotFoundException(ExceptionMessageTemplates.PROCEDURE_NOT_FOUND_MESSAGE));
+        return procedureRepository.findByName(name).orElseThrow(() -> new ProcedureNotFoundException(ExceptionMessageTemplates.PROCEDURE_NOT_FOUND_MESSAGE));
     }
 }

@@ -3,7 +3,8 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 <head>
     <title>Ratings</title>
     <link rel="stylesheet" type="text/css" th:href="@{/assets/css/bootstrap.css}">
@@ -96,144 +97,31 @@
     </nav>
 </header>
 
-<h1 class="text-center" th:text="#{registration_on_procedure}"></h1>
 
-<div class="table">
-    <form th:action="@{/api/appointments/add}" method="post">
-        <div class="row">
-            <div class="col-lg-1"></div>
-            <div class="col-lg-2">
-                <select class="form-select" id="masters" th:name="masterIn">
-                    <option th:each="master : ${allMasters}" th:text="${master.getLogin().substring(0, master.login.indexOf('@'))}" th:value="${master.getId()}">Open this select menu
-                    </option>
-                </select>
-            </div>
-            <div class="col-lg-2">
-                <select class="form-select" id="skills" th:name="skillIn">
-
-                </select>
-            </div>
-            <div class="col-lg-2">
-                <input type="date" class="form-control"
-                       th:min="${thisDay.plusDays(1)}" th:max="${thisDay.plusDays(7)}" th:value="${dateAppointment}" id="date" th:name="dateIn">
-            </div>
-            <div class="col-lg-2">
-                <input type="time" class="form-control" placeholder="Start time" aria-label="Start time"
-                       min="11:00" max="18:00" th:name="timeIn" value="11:00">
-            </div>
-            <div class="col-lg-2">
-                <button class="btn btn-primary" th:text="#{menu_book}" type="submit">Toggle button</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-
-<table class="table align-middle" id="table">
-    <caption></caption>
-    <h5 class="text-center" th:text="#{schedule_this_day}">schedule_this_day</h5>
+<h1 class="text-center" th:text="#{rate_our}">rating_our_masters</h1>
+<table class="table align-middle">
     <thead>
     <tr>
-        <th scope="col" class="text-center" th:text="#{start_time}">start_time</th>
-        <th scope="col" class="text-center" th:text="#{end_time}">start_time</th>
-        <th scope="col" class="text-center" th:text="#{status}">status</th>
+        <form th:action="@{/api/appointments/get/rate/{id}(id=${appointment.getId()})}" method="post">
+            <th scope="col" class="text-center">
+        <select class="form-select" id="masters" th:name="rating">
+            <option th:each="ranges : ${range}" th:text="${ranges}" th:value="${ranges}">Open this select menu
+            </option>
+        </select>
+        </th>
+            <th scope="col" class="text-center">
+                <button class="btn btn-primary" th:text="#{submit}" type="submit">Toggle button</button>
+            </th>
+            <input type="hidden" name="masterId"
+                   th:value="${appointment.master.getId()}">
+        </form>
     </tr>
     </thead>
-    <tbody id="tbody">
-    <tr th:if="${masterAppointments != null}" th:each="appointment : ${masterAppointments}">
-        <td th:text="${appointment.getStartTime()}">appointment.startTime</td>
-        <td th:text="${appointment.getEndTime()}">appointment.endTime</td>
-        <td th:text="#{${appointment.getStatus()}}">appointment.status</td>
-    </tr>
-    </tbody>
 </table>
 
 
-<script th:src="@{/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/assets/js/bootstrap.bundle.js}"></script>
 <script th:src="@{/assets/js/jquery-3.6.0.js}"></script>
-<script th:inline="javascript">
-    var masters = [[${allMasters}]];
-    var masterName = [[${masterName}]];
-    var dateAppointment = [[${dateAppointment}]];
-</script>
-<script>
-    $(document).ready(function () {
-        var func = function () {
-            var masterName = $("#masters").val();
-            var master = masters.find(m => m.id == masterName);
-            var optionList = "";
-            var skillList = master.skills;
-            for (var i = 0; i < skillList.length; i++) {
-                optionList += "<option value=" + skillList[i].name + ">" + skillList[i].name + "</option>";
-            }
-            $("#skills").html(optionList);
-        };
-        func();
-        $("#masters").change(() => func());
-    });
-</script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        if (masterName != null) {
-            $("#masters").val(masters.find(m => m.login === masterName).id).change();
-        }
-        if (dateAppointment != null) {
-            $("#date").val(dateAppointment).change();
-        }
-        $('#date').change(function () {
-            var masterName = $("#masters").val();
-            var master = masters.find(m => m.id == masterName);
-            var sendData = {
-                id: master.id,
-                date: $("#date").val()
-            }
-            $.ajax('http://localhost:8080/api/users/jquery/getdata',   // request url
-                {
-                    type: 'POST',
-                    data: JSON.stringify(sendData),
-                    contentType: "application/json; charset=utf-8",
-                    success: function (data, status, xhr) {
-                        $('#tbody').empty();// success callback function
-                        $.each(data, function (i, item) {
-                            var tr = $('<tr>').append(
-                                $('<td>').text(item.startTime),
-                                $('<td>').text(item.endTime),
-                                $('<td>').text(item.appointmentStatus)
-                            ); //.appendTo('#records_table');
-                            $('#table').append(tr);
-                        });
-                    }
-                });
-        });
-
-        $('#masters').change(function () {
-            var masterName = $("#masters").val();
-            var master = masters.find(m => m.id == masterName);
-            var sendData = {
-                id: master.id,
-                date: $("#date").val()
-            }
-            $.ajax('http://localhost:8080/api/users/jquery/getdata',   // request url
-                {
-                    type: 'POST',
-                    data: JSON.stringify(sendData),
-                    contentType: "application/json; charset=utf-8",
-                    success: function (data, status, xhr) {
-                        $('#tbody').empty();// success callback function
-                        $.each(data, function (i, item) {
-                            var tr = $('<tr>').append(
-                                $('<td>').text(item.startTime),
-                                $('<td>').text(item.endTime),
-                                $('<td>').text(item.appointmentStatus)
-                            ); //.appendTo('#records_table');
-                            $('#table').append(tr);
-                        });
-                    }
-                });
-        });
-
-    });
-</script>
 <script type="text/javascript">
     $('#btnradio2').click(function() {
         var x = new XMLHttpRequest();
@@ -252,7 +140,5 @@
         location.reload();
     });
 </script>
-</div>
-<script defer th:src="@{/assets/js/bootstrap.bundle.js}"></script>
 </body>
 </html>
