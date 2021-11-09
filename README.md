@@ -1,4 +1,4 @@
-Educational Project Epam University Program. Java 2018
+Educational Project on Epam Java Summer Program 2021
 
 Task:
 
